@@ -1,0 +1,8 @@
+{
+  "name": "Logística Muelle App",
+  "description": "App móvil para gestión de entradas y salidas de mercancía en muelle de carga con integración a Make.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": []
+}

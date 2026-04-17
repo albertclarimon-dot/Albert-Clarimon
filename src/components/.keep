@@ -1,0 +1,2 @@
+// Dummy file to suppress Next.js error if they expect it, but we are in Vite.
+// Just ensuring directories exist if needed later.
