@@ -29,6 +29,23 @@ export const dbService = {
   
   // Users
   getUsers: (): User[] => JSON.parse(localStorage.getItem(USERS_KEY) || '[]'),
+  saveUser: (user: User) => {
+    const users = dbService.getUsers();
+    users.push(user);
+    localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  },
+  deleteUser: (id: string) => {
+    const users = dbService.getUsers();
+    localStorage.setItem(USERS_KEY, JSON.stringify(users.filter(u => u.id !== id)));
+  },
+  updateUserRole: (id: string, role: 'ADMIN' | 'OPERARIO' | 'SUPERVISOR') => {
+    const users = dbService.getUsers();
+    const idx = users.findIndex(u => u.id === id);
+    if (idx > -1) {
+      users[idx].role = role;
+      localStorage.setItem(USERS_KEY, JSON.stringify(users));
+    }
+  },
   
   // Records
   getRecords: (): LogisticRecord[] => JSON.parse(localStorage.getItem(RECORDS_KEY) || '[]'),

@@ -11,6 +11,7 @@ import Home from './pages/Home';
 import RecordForm from './pages/RecordForm';
 import History from './pages/History';
 import Incidents from './pages/Incidents';
+import Users from './pages/Users';
 
 const Profile = () => {
   const { currentUser, logout } = useAppContext();
@@ -58,6 +59,7 @@ export default function App() {
             <Route path="record/:type" element={<RecordForm />} />
             <Route path="history" element={<History />} />
             <Route path="incidents" element={<Incidents />} />
+            <Route path="users" element={<Users />} />
             <Route path="profile" element={<Profile />} />
           </Route>
         </Routes>

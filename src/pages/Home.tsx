@@ -19,9 +19,6 @@ export default function Home() {
       {/* Header Info */}
       <header className="md:col-span-4 flex justify-between items-center mb-1">
         <div className="flex items-center gap-[15px]">
-          <div className="w-12 h-12 bg-[#cbd5e1] rounded-full flex items-center justify-center font-bold text-[#1a1a1b] shadow-sm">
-             {currentUser?.name?.substring(0, 2).toUpperCase() || 'JP'}
-          </div>
           <div>
             <h1 className="text-[18px] font-bold text-[#1a1a1b] leading-tight">{currentUser?.name}</h1>
             <p className="text-[12px] text-[#64748b] font-medium mt-0.5">{currentUser?.terminal} • Dock #04</p>

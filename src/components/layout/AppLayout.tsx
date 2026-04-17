@@ -1,5 +1,5 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { Home, ClipboardList, AlertTriangle, User as UserIcon, Wifi } from 'lucide-react';
+import { Home, ClipboardList, AlertTriangle, User as UserIcon, Wifi, Users } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useAppContext } from '../../context/AppContext';
 
@@ -14,11 +14,9 @@ export function AppLayout() {
            <>
              <NavIcon path="/history" activePath="/history" borderOnly />
              <NavIcon path="/incidents" activePath="/incidents" circle />
+             <NavIcon path="/users" activePath="/users" danger />
            </>
          )}
-         <div className="mt-auto">
-           <NavIcon path="/profile" activePath="/profile" danger />
-         </div>
       </nav>
 
       <div className="md:hidden">
@@ -60,6 +58,7 @@ function NavIcon({ path, activePath, borderOnly, circle, danger }: any) {
 }
 
 function TopBar() {
+  const navigate = useNavigate();
   return (
     <header className="flex items-center justify-between px-5 py-4 bg-white sticky top-0 z-10 border-b border-[#e2e8f0]">
       <div className="flex items-center gap-2 text-[#294396] font-bold text-lg tracking-tight">
@@ -75,10 +74,9 @@ function TopBar() {
         PRETEC
       </div>
       <div className="flex items-center gap-3">
-        <Wifi className="w-5 h-5 text-[#64748b]" />
-        <div className="w-8 h-8 rounded-full border border-[#cbd5e1] overflow-hidden bg-[#f0f2f5] flex items-center justify-center">
+        <button onClick={() => navigate('/profile')} className="w-8 h-8 rounded-full border border-[#cbd5e1] overflow-hidden bg-[#f0f2f5] flex items-center justify-center hover:bg-slate-200 transition-colors">
            <UserIcon className="w-5 h-5 text-[#94a3b8]" />
-        </div>
+        </button>
       </div>
     </header>
   );
@@ -94,8 +92,8 @@ function BottomNav() {
     ...(currentUser?.role === 'ADMIN' ? [
       { name: 'HIST', path: '/history', icon: ClipboardList },
       { name: 'INCID', path: '/incidents', icon: AlertTriangle },
+      { name: 'EQUIPO', path: '/users', icon: Users },
     ] : []),
-    { name: 'PERFIL', path: '/profile', icon: UserIcon },
   ];
 
   return (

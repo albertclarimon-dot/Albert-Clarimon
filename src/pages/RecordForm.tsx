@@ -19,6 +19,8 @@ export default function RecordForm() {
   
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [validationError, setValidationError] = useState('');
   
   // Form State
   const [formData, setFormData] = useState({
@@ -63,8 +65,25 @@ export default function RecordForm() {
     }
   };
 
+  const handleNextStep = () => {
+    // Validate Step 1
+    if (!formData.licensePlate || !formData.transportCompany || !formData.entityName || !formData.referenceNumber || !formData.waybillNumber || formData.pieceCount <= 0) {
+       setValidationError('Por favor, complete todos los campos obligatorios y asegúrese de que el nº de piezas sea mayor a 0 antes de continuar.');
+       return;
+    }
+    setValidationError('');
+    setStep(2);
+  };
   const submitRecord = async () => {
+    // Validate Evidences
+    if (cargoPhotos.length === 0) {
+       setValidationError('Debe incluir al menos 1 fotografía de la mercancía de forma obligatoria.');
+       return;
+    }
+    setValidationError('');
+
     if (isSubmitting) return;
+
     setIsSubmitting(true);
     
     const signatureBase64 = signatureRef.current?.isEmpty() ? null : signatureRef.current?.toDataURL();
@@ -87,17 +106,28 @@ export default function RecordForm() {
     // 1. Save to local context
     addRecord(newRecord);
 
-    // 2. Simulate webhook
     try {
       await sendRecordToMake(newRecord);
-      // Optional: Update record syncStatus in local state if we want
+      setShowSuccess(true);
     } catch (e) {
       console.error("Failed to send to Make", e);
     } finally {
       setIsSubmitting(false);
-      navigate('/', { replace: true });
     }
   };
+
+  if (showSuccess) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 animate-in fade-in zoom-in duration-300">
+         <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4">
+            <Check className="w-10 h-10 text-green-600" />
+         </div>
+         <h2 className="text-2xl font-bold text-slate-900 text-center">Información enviada correctamente</h2>
+         <p className="text-slate-500 text-center mb-8">Los datos han sido registrados e integrados mediante Make con éxito.</p>
+         <Button size="lg" className="px-12" onClick={() => navigate('/', { replace: true })}>Cerrar y Volver</Button>
+      </div>
+    );
+  }
 
   if (step === 1) {
     return (
@@ -185,7 +215,13 @@ export default function RecordForm() {
           </div>
         </Card>
 
-        <Button size="lg" className="w-full mt-4" onClick={() => setStep(2)}>
+        {validationError && (
+          <div className="bg-red-50 text-red-600 p-3 rounded-xl border border-red-200 text-sm font-medium">
+            {validationError}
+          </div>
+        )}
+
+        <Button size="lg" className="w-full mt-4" onClick={handleNextStep}>
           Continuar a Evidencias &nbsp; →
         </Button>
       </div>
@@ -291,6 +327,12 @@ export default function RecordForm() {
            </p>
          </div>
       </div>
+
+      {validationError && (
+        <div className="bg-red-50 text-red-600 p-3 rounded-xl border border-red-200 text-sm font-medium">
+          {validationError}
+        </div>
+      )}
 
       <Button size="lg" className="w-full mt-2 gap-3 shadow-lg" onClick={submitRecord} disabled={isSubmitting}>
         {isSubmitting ? 'ENVIANDO...' : 'FINALIZAR Y ENVIAR REGISTRO'}
