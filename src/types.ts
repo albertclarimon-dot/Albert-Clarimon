@@ -6,6 +6,8 @@ export type IncidentStatus = 'PENDIENTE' | 'REVISADA' | 'CERRADA';
 export interface User {
   id: string;
   name: string;
+  username: string; // login identifier
+  pin: string; // password
   role: 'OPERARIO' | 'SUPERVISOR' | 'ADMIN';
   terminal: string;
 }

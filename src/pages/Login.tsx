@@ -4,24 +4,35 @@ import { Truck } from 'lucide-react';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
 import { useAppContext } from '../context/AppContext';
+import { dbService } from '../services/db';
 
 export default function Login() {
   const [username, setUsername] = useState('');
   const [pin, setPin] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
   const { login } = useAppContext();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    const isAdmin = username.toLowerCase() === 'admin';
+    dbService.init(); // ensure DB is loaded
+    const users = dbService.getUsers();
     
-    // Simulate login
-    login({
-      id: isAdmin ? 'admin-1' : 'u-123',
-      name: isAdmin ? 'Admin Pretec' : (username || 'Operario'),
-      role: isAdmin ? 'ADMIN' : 'OPERARIO',
-      terminal: isAdmin ? 'Sede Central' : 'Terminal Muelle 01'
-    });
+    // Find user
+    const foundUser = users.find(u => u.username.toLowerCase() === username.toLowerCase());
+    
+    if (!foundUser) {
+        setError('Usuario no encontrado');
+        return;
+    }
+    
+    if (foundUser.pin !== pin) {
+        setError('PIN / Contraseña incorrecta');
+        return;
+    }
+    
+    // Success login
+    login(foundUser);
     navigate('/');
   };
 
@@ -65,7 +76,7 @@ export default function Login() {
         />
 
         <div className="bg-blue-50 border border-blue-100 p-3 rounded-lg text-sm text-blue-800 font-medium">
-          💡 Para probar la vista de Administrador, escribe "admin" en el usuario. Cualquier otro texto entrará como Operario.
+          💡 Esta aplicación utiliza almacenamiento del navegador (localStorage) para guardar los datos permanentemente en este dispositivo.
         </div>
         
         <div className="flex items-center justify-between mt-2">
@@ -76,10 +87,22 @@ export default function Login() {
           <a href="#" className="text-sm font-bold text-slate-900">Recuperar acceso</a>
         </div>
 
+        {error && (
+            <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg border border-red-200">
+                {error}
+            </div>
+        )}
+
         <Button type="submit" size="lg" className="w-full mt-4">
           Entrar
         </Button>
       </form>
+
+      <div className="mt-8 text-center text-sm text-slate-500 max-w-xs leading-relaxed">
+         Cuentas demo:<br/>
+         - <b>admin</b> / 1234 (Dashboard Total)<br/>
+         - <b>juanp</b> / 0000 (Solo registro)
+      </div>
     </div>
   );
 }
